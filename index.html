@@ -130,19 +130,94 @@
             color: white;
         }
         
+        /* 让报告输出框内容完全居中 */
         #reportOutput {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 20px;
+            padding: 40px 20px;
             font-family: 'Consolas', monospace;
-            white-space: pre-wrap;
-            max-height: 500px;
-            overflow-y: auto;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 16px;
+            color: #495057;
+            margin-top: 25px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        /* 确保报告生成区域卡片内所有内容对齐 */
+        #reports .card-body {
+            padding: 24px;
+        }
+        
+        /* 按钮行保持正常布局，不影响提示居中 */
+        #reports .card-body .row {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            margin-bottom: 0;
         }
 
-        .container {
-            z-index: 10000px;
+        
+        #reports .card-body .row > div {
+            flex: 1;
+            min-width: 0; /* 防止溢出 */
         }
+        
+        #reports .card-body .row .col-md-4:last-child {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+        }
+        
+        #reports .card-body .row .col-md-4:last-child .btn {
+            width: 100%;
+            height: 42px; /* 与输入框高度协调 */
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 表单标签与输入框间距优化 */
+        #reports .form-label {
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        #reports .form-select,
+        #reports .btn-primary {
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        
+        /* 报告输出框上方留白调整 */
+        #reportOutput {
+            margin-top: 25px;
+        }
+        
+        /* 确保在小屏幕上也能保持间距 */
+        @media (max-width: 768px) {
+            #reports .card-body .row {
+                flex-direction: column;
+                gap: 18px;
+            }
+            
+            #reports .card-body .row > div {
+                width: 100%;
+            }
+            
+            #reports .card-body .row .col-md-4:last-child .btn {
+                height: 48px; /* 移动端增大点击区域 */
+                font-size: 16px;
+            }
+        }
+    
     </style>
 </head>
 <body>
