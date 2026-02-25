@@ -130,30 +130,22 @@
             color: white;
         }
         
-        /* 让报告输出框内容完全居中 */
         #reportOutput {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 40px 20px;
+            padding: 20px;
             font-family: 'Consolas', monospace;
-            min-height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            text-align: left;
             line-height: 1.6;
-            font-size: 16px;
-            color: #495057;
+            font-size: 14px;
+            color: #333;
             margin-top: 25px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
         
-        /* 确保报告生成区域卡片内所有内容对齐 */
-        #reports .card-body {
-            padding: 24px;
-        }
-        
-        /* 按钮行保持正常布局，不影响提示居中 */
+        /* 确保按钮行保持原有布局 */
         #reports .card-body .row {
             display: flex;
             align-items: flex-end;
@@ -524,10 +516,7 @@
                         </div>
                     </div>
                     
-                    <div id="reportOutput">
-                        <!-- 报告内容将在这里显示 -->
-                        请点击"生成报告"按钮创建ESG报告
-                    </div>
+                    <div id="reportOutput">请点击"生成报告"按钮创建ESG报告</div>
                     
                     <div class="mt-3 text-end">
                         <button class="btn btn-outline-primary me-2" onclick="exportToPDF()">导出PDF</button>
