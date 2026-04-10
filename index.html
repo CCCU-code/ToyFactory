@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>澄海玩具ESG数据通</title>
+    <title>澄海玩具ESG数据通 | 企业可持续发展管理平台</title>
+    
+    <!-- 引入Bootstrap 5 CSS -->
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- 引入ECharts图表库 -->
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <!-- 引入SheetJS (Excel导出) -->
     <script src="https://cdn.bootcdn.net/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <style>
         :root {
             --primary-color: #1890ff;
@@ -16,7 +23,7 @@
         }
         
         body {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         
@@ -25,30 +32,25 @@
             color: var(--primary-color) !important;
         }
         
+        /* 卡片样式 */
         .esg-card {
             border-radius: 10px;
             border: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
             margin-bottom: 20px;
         }
         
         .esg-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .card-environment {
-            border-top: 4px solid var(--success-color);
-        }
+        .card-environment { border-top: 4px solid var(--success-color); }
+        .card-social { border-top: 4px solid var(--primary-color); }
+        .card-governance { border-top: 4px solid var(--warning-color); }
         
-        .card-social {
-            border-top: 4px solid var(--primary-color);
-        }
-        
-        .card-governance {
-            border-top: 4px solid var(--warning-color);
-        }
-        
+        /* 得分显示样式 */
         .esg-score {
             font-size: 2.5rem;
             font-weight: bold;
@@ -61,27 +63,14 @@
         .score-fair { color: var(--warning-color); }
         .score-poor { color: var(--danger-color); }
         
-        .chart-container {
-            width: 100%;
-            height: 300px;
-            margin: 20px 0;
+        /* 图表容器 */
+        .chart-container { 
+            width: 100%; 
+            height: 300px; 
+            margin: 20px 0; 
         }
         
-        .data-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-success {
-            background-color: var(--success-color);
-            border-color: var(--success-color);
-        }
-        
+        /* 步骤指示器 */
         .step-indicator {
             display: flex;
             justify-content: space-between;
@@ -130,128 +119,173 @@
             color: white;
         }
         
-        #reportOutput {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            font-family: 'Consolas', monospace;
-            white-space: pre-wrap;
-            max-height: 500px;
-            overflow-y: auto;
-            text-align: left;
-            line-height: 1.6;
-            font-size: 14px;
-            color: #333;
-            margin-top: 25px;
+        /* 新闻卡片样式 */
+        .news-card {
+            height: 100%;
+            transition: all 0.3s ease;
         }
         
-        /* 确保按钮行保持原有布局 */
-        #reports .card-body .row {
-            display: flex;
-            align-items: flex-end;
-            gap: 15px;
-            margin-bottom: 0;
-        }
-
-        
-        #reports .card-body .row > div {
-            flex: 1;
-            min-width: 0; /* 防止溢出 */
+        .news-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
         
-        #reports .card-body .row .col-md-4:last-child {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0;
-        }
-        
-        #reports .card-body .row .col-md-4:last-child .btn {
+        .news-img {
+            height: 180px;
+            object-fit: cover;
             width: 100%;
-            height: 42px; /* 与输入框高度协调 */
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
         }
         
-        /* 表单标签与输入框间距优化 */
-        #reports .form-label {
-            margin-bottom: 6px;
-            font-weight: 500;
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 8px;
             color: #333;
         }
         
-        #reports .form-select,
-        #reports .btn-primary {
-            border-radius: 8px;
-            font-size: 15px;
+        /* 行业数据卡片 */
+        .data-metric-card {
+            text-align: center;
+            padding: 20px 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            height: 100%;
         }
         
-        /* 报告输出框上方留白调整 */
-        #reportOutput {
-            margin-top: 25px;
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 10px 0;
         }
         
-        /* 确保在小屏幕上也能保持间距 */
-        @media (max-width: 768px) {
-            #reports .card-body .row {
-                flex-direction: column;
-                gap: 18px;
-            }
-            
-            #reports .card-body .row > div {
-                width: 100%;
-            }
-            
-            #reports .card-body .row .col-md-4:last-child .btn {
-                height: 48px; /* 移动端增大点击区域 */
-                font-size: 16px;
-            }
+        /* 付费标签 */
+        .premium-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #fff;
+            font-size: 0.75em;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            vertical-align: middle;
         }
-    
+        
+        /* 加载动画 */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        .navbar-brand {
+          color: #333 !important;
+        }
     </style>
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1IDI4QzIyLjE4MTcgMjggMjggMjIuMTgxNyAyOCAxNUMyOCA3LjgxODI5IDIyLjE4MTcgMiAxNSAyQzcuODE4MjkgMiAyIDcuODE4MjkgMiAxNUMyIDIyLjE4MTcgNy44MTgyOSAyOCAxNSAyOFoiIGZpbGw9IiMxODkwRkYiLz4KPHBhdGggZD0iTTEwIDEySDE5VjE3SDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTEwIDE5SDE5VjI0SDEwVjE5WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==" alt="Logo" width="30" height="30" class="me-2">
+                <img src="./logo.jpg" alt="" width="6%">
                 澄海玩具ESG数据通
             </a>
-            <div class="navbar-nav">
-                <a class="nav-link active" href="#dataEntry">数据录入</a>
-                <a class="nav-link" href="#dashboard">仪表盘</a>
-                <a class="nav-link" href="#reports">报告生成</a>
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav">
+                    <a class="nav-link active" href="#dataEntry"><i class="bi bi-pencil-square me-1"></i>数据录入</a>
+                    <a class="nav-link" href="#dashboard"><i class="bi bi-speedometer2 me-1"></i>仪表盘</a>
+                    <a class="nav-link" href="#reports"><i class="bi bi-file-earmark-text me-1"></i>报告生成</a>
+                    <a class="nav-link" href="#newsSection"><i class="bi bi-newspaper me-1"></i>ESG热点</a>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
+        <!-- 行业数据快照 -->
+        <div class="row mb-4" id="industrySnapshot">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="bi bi-graph-up me-2"></i>ESG行业数据快照</h4>
+                    <div>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="refreshIndustryData()">
+                            <i class="bi bi-arrow-clockwise"></i> 刷新数据
+                        </button>
+                        <span class="text-muted" style="font-size:0.85rem;">最后更新: <span id="lastUpdateTime">--:--:--</span></span>
+                    </div>
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="data-metric-card">
+                            <div class="text-muted mb-1">玩具行业平均ESG得分</div>
+                            <div class="metric-value text-primary" id="industryAvgScore">68.2</div>
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                <span id="industryScoreChange">+1.2%</span> 较上月
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="data-metric-card">
+                            <div class="text-muted mb-1">行业平均碳排放强度</div>
+                            <div class="metric-value text-success" id="industryCarbonIntensity">8.7</div>
+                            <div class="text-muted" style="font-size:0.8rem;">吨CO₂e/百万元产值</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="data-metric-card">
+                            <div class="text-muted mb-1">可持续材料使用率</div>
+                            <div class="metric-value text-warning" id="sustainableMaterialRate">42.5%</div>
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                <span id="materialRateChange">+3.8%</span> 行业趋势
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 col-sm-6">
+                        <div class="data-metric-card">
+                            <div class="text-muted mb-1">ESG披露企业占比</div>
+                            <div class="metric-value text-info" id="esgDisclosureRate">65.8%</div>
+                            <div class="text-muted" style="font-size:0.85rem;">
+                                <span id="disclosureChange">+5.2%</span> 较去年
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 数据录入部分 -->
         <div id="dataEntry" class="mb-5">
             <h2 class="mb-4">ESG数据录入</h2>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="mb-0 text-muted">填写或更新下方ESG数据。</p>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="fetchLatestESGData()">
+                    <i class="bi bi-cloud-arrow-down-fill me-1"></i> 智能更新数据
+                </button>
+            </div>
+            
+            <div class="alert alert-info" role="alert" id="dataUpdateAlert" style="display:none;">
+                <i class="bi bi-info-circle me-2"></i><span id="dataUpdateText">正在从网络获取最新的行业基准数据...</span>
+            </div>
             
             <div class="step-indicator">
-                <div class="step active" id="step1">
-                    <div class="step-circle">1</div>
-                    <div>基础信息</div>
-                </div>
-                <div class="step" id="step2">
-                    <div class="step-circle">2</div>
-                    <div>环境数据</div>
-                </div>
-                <div class="step" id="step3">
-                    <div class="step-circle">3</div>
-                    <div>社会数据</div>
-                </div>
-                <div class="step" id="step4">
-                    <div class="step-circle">4</div>
-                    <div>治理数据</div>
-                </div>
+                <div class="step active" id="step1"><div class="step-circle">1</div><div>基础信息</div></div>
+                <div class="step" id="step2"><div class="step-circle">2</div><div>环境数据</div></div>
+                <div class="step" id="step3"><div class="step-circle">3</div><div>社会数据</div></div>
+                <div class="step" id="step4"><div class="step-circle">4</div><div>治理数据</div></div>
             </div>
-
+            
             <form id="esgDataForm">
                 <!-- 步骤1: 基础信息 -->
                 <div id="step1Content" class="step-content">
@@ -259,7 +293,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="companyName" class="form-label">企业名称 *</label>
-                                <input type="text" class="form-control" id="companyName" value="澄海玩具制造有限公司" required>
+                                <input type="text" class="form-control" id="companyName" 
+                                       value="澄海玩具制造有限公司" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -268,7 +303,7 @@
                                 <div class="d-flex gap-3">
                                     <div class="flex-grow-1">
                                         <select class="form-select" id="reportYear" required>
-                                            <!-- 年份将通过JavaScript动态生成 -->
+                                            <!-- 通过JS动态生成 -->
                                         </select>
                                     </div>
                                     <div class="flex-grow-1">
@@ -287,7 +322,7 @@
                         <button type="button" class="btn btn-primary" onclick="nextStep(2)">下一步</button>
                     </div>
                 </div>
-
+                
                 <!-- 步骤2: 环境数据 -->
                 <div id="step2Content" class="step-content" style="display: none;">
                     <h5 class="mb-3">环境指标</h5>
@@ -295,14 +330,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="electricity" class="form-label">电力消耗 (kWh)</label>
-                                <input type="number" class="form-control" id="electricity" value="15000" step="100">
-                                <div class="form-text">月度电力消耗量</div>
+                                <input type="number" class="form-control" id="electricity" 
+                                       value="15000" min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="water" class="form-label">用水量 (吨)</label>
-                                <input type="number" class="form-control" id="water" value="120" step="10">
+                                <input type="number" class="form-control" id="water" 
+                                       value="120" min="0">
                             </div>
                         </div>
                     </div>
@@ -310,13 +346,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="plastic" class="form-label">塑料使用量 (kg)</label>
-                                <input type="number" class="form-control" id="plastic" value="500" step="50">
+                                <input type="number" class="form-control" id="plastic" 
+                                       value="500" min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="waste" class="form-label">废弃物产生量 (kg)</label>
-                                <input type="number" class="form-control" id="waste" value="80" step="5">
+                                <input type="number" class="form-control" id="waste" 
+                                       value="80" min="0">
                             </div>
                         </div>
                     </div>
@@ -325,7 +363,7 @@
                         <button type="button" class="btn btn-primary" onclick="nextStep(3)">下一步</button>
                     </div>
                 </div>
-
+                
                 <!-- 步骤3: 社会数据 -->
                 <div id="step3Content" class="step-content" style="display: none;">
                     <h5 class="mb-3">社会指标</h5>
@@ -333,13 +371,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="employees" class="form-label">员工总数</label>
-                                <input type="number" class="form-control" id="employees" value="150">
+                                <input type="number" class="form-control" id="employees" 
+                                       value="150" min="1">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="training" class="form-label">培训时长 (小时)</label>
-                                <input type="number" class="form-control" id="training" value="320" step="10">
+                                <input type="number" class="form-control" id="training" 
+                                       value="320" min="0">
                             </div>
                         </div>
                     </div>
@@ -347,13 +387,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="accidents" class="form-label">安全事故数</label>
-                                <input type="number" class="form-control" id="accidents" value="2" min="0">
+                                <input type="number" class="form-control" id="accidents" 
+                                       value="2" min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="turnover" class="form-label">员工流失率 (%)</label>
-                                <input type="number" class="form-control" id="turnover" value="8.5" step="0.1" min="0" max="100">
+                                <input type="number" class="form-control" id="turnover" 
+                                       value="8.5" min="0" max="100" step="0.1">
                             </div>
                         </div>
                     </div>
@@ -362,7 +404,7 @@
                         <button type="button" class="btn btn-primary" onclick="nextStep(4)">下一步</button>
                     </div>
                 </div>
-
+                
                 <!-- 步骤4: 治理数据 -->
                 <div id="step4Content" class="step-content" style="display: none;">
                     <h5 class="mb-3">治理指标</h5>
@@ -370,13 +412,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="audits" class="form-label">合规审计次数</label>
-                                <input type="number" class="form-control" id="audits" value="4">
+                                <input type="number" class="form-control" id="audits" 
+                                       value="4" min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="corruption" class="form-label">腐败案件数</label>
-                                <input type="number" class="form-control" id="corruption" value="0" min="0">
+                                <input type="number" class="form-control" id="corruption" 
+                                       value="0" min="0">
                             </div>
                         </div>
                     </div>
@@ -384,13 +428,15 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="diversity" class="form-label">董事会多元化比例 (%)</label>
-                                <input type="number" class="form-control" id="diversity" value="35" min="0" max="100">
+                                <input type="number" class="form-control" id="diversity" 
+                                       value="35" min="0" max="100">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="attachment" class="form-label">附件上传</label>
-                                <input type="file" class="form-control" id="attachment" accept=".xlsx,.xls,.pdf,.jpg,.png">
+                                <input type="file" class="form-control" id="attachment" 
+                                       accept=".xlsx,.xls,.pdf,.jpg,.png,.doc,.docx">
                             </div>
                         </div>
                     </div>
@@ -405,14 +451,13 @@
         <!-- 仪表盘部分 -->
         <div id="dashboard" class="mb-5">
             <h2 class="mb-4">ESG仪表盘</h2>
-            
             <div class="row">
                 <div class="col-md-3">
                     <div class="card esg-card card-environment">
                         <div class="card-body text-center">
                             <h5 class="card-title">环境得分</h5>
                             <div id="envScore" class="esg-score score-good">78.5</div>
-                            <p class="card-text">行业排名: 前35%</p>
+                            <p class="card-text">行业排名: 前 35%</p>
                         </div>
                     </div>
                 </div>
@@ -421,7 +466,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">社会得分</h5>
                             <div id="socialScore" class="esg-score score-fair">65.2</div>
-                            <p class="card-text">行业排名: 前50%</p>
+                            <p class="card-text">行业排名: 前 50%</p>
                         </div>
                     </div>
                 </div>
@@ -430,7 +475,7 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">治理得分</h5>
                             <div id="govScore" class="esg-score score-good">82.0</div>
-                            <p class="card-text">行业排名: 前25%</p>
+                            <p class="card-text">行业排名: 前 25%</p>
                         </div>
                     </div>
                 </div>
@@ -444,7 +489,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="row mt-4">
                 <div class="col-md-6">
                     <div class="card esg-card">
@@ -463,7 +508,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="card esg-card mt-4">
                 <div class="card-body">
                     <h5 class="card-title mb-3">数据记录</h5>
@@ -481,7 +526,7 @@
                                 </tr>
                             </thead>
                             <tbody id="dataRecords">
-                                <!-- 数据记录将通过JS动态生成 -->
+                                <!-- 通过JS动态生成 -->
                             </tbody>
                         </table>
                     </div>
@@ -492,7 +537,6 @@
         <!-- 报告生成部分 -->
         <div id="reports" class="mb-5">
             <h2 class="mb-4">ESG报告生成</h2>
-            
             <div class="card esg-card">
                 <div class="card-body">
                     <div class="row mb-4">
@@ -512,25 +556,125 @@
                             </select>
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
-                            <button class="btn btn-primary w-100" onclick="generateReport()">生成报告</button>
+                            <button class="btn btn-primary w-100" onclick="generateReport()">
+                                <i class="bi bi-file-earmark-text me-1"></i> 生成报告
+                            </button>
                         </div>
                     </div>
                     
-                    <div id="reportOutput">请点击"生成报告"按钮创建ESG报告</div>
+                    <div id="reportOutput" style="background-color:#f8f9fa; border-radius:8px; padding:20px; font-family:'Consolas',monospace; white-space:pre-wrap; max-height:500px; overflow-y:auto;">
+                        请点击"生成报告"按钮创建ESG报告
+                    </div>
                     
                     <div class="mt-3 text-end">
-                        <button class="btn btn-outline-primary me-2" onclick="exportToPDF()">导出PDF</button>
-                        <button class="btn btn-outline-success" onclick="exportToExcel()">导出Excel</button>
+                        <button class="btn btn-outline-primary me-2" onclick="exportToPDF()">
+                            <i class="bi bi-file-pdf me-1"></i> 导出PDF
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportToExcel()">
+                            <i class="bi bi-file-spreadsheet me-1"></i> 导出Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESG热点新闻板块 -->
+        <div class="news-section" id="newsSection">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4><i class="bi bi-newspaper me-2"></i>ESG热点新闻与政策</h4>
+                <div>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-primary active" onclick="showNewsList()">新闻列表</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="filterNews('policy')">政策</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="filterNews('industry')">行业</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="filterNews('tech')">技术</button>
+                    </div>
+                    <button class="btn btn-outline-success btn-sm ms-2" onclick="fetchESGNews()">
+                        <i class="bi bi-lightning-charge"></i> 获取最新
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 新闻加载状态 -->
+            <div class="spinner-container" id="newsLoading" style="display: none;">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">加载中...</span>
+                    </div>
+                    <p class="text-muted">正在从合法数据源获取ESG热点新闻...</p>
+                </div>
+            </div>
+            
+            <!-- 新闻列表容器 (默认显示) -->
+            <div id="newsListContainer">
+                <div class="row g-4" id="newsContainer">
+                    <!-- 新闻列表将通过JS动态加载 -->
+                </div>
+            </div>
+            
+            <!-- 新闻详情容器 (默认隐藏) -->
+            <div id="newsDetailContainer" style="display: none;">
+                <div class="card esg-card">
+                    <div class="card-body">
+                        <button class="btn btn-outline-secondary mb-3" onclick="showNewsList()">
+                            <i class="bi bi-arrow-left"></i> 返回列表
+                        </button>
+                        <div id="newsDetailContent">
+                            <!-- 详情内容将通过JS动态加载 -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 支付模态框 -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">开通VIP专业版</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="display-4 text-warning mb-3">¥4,980<span class="fs-6 text-muted">/年</span></div>
+                    <ul class="list-unstyled text-start mb-4">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>完整ESG报告生成与导出</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>智能数据爬取与实时更新</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>多语言报告支持</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>高级分析与趋势预测</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>专属客户支持</li>
+                    </ul>
+                    <p class="text-muted">请选择支付方式完成开通。</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-lg" onclick="redirectToPayment('alipay')">
+                            <i class="bi bi-credit-card me-2"></i> 支付宝支付
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="redirectToPayment('wechat')">
+                            <i class="bi bi-wechat me-2"></i> 微信支付
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入Bootstrap JS -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // 步骤管理
-        let currentStep = 1;
+        // ============================================
+        // 核心功能模块
+        // ============================================
         
+        let currentStep = 1;
+        const sampleData = [
+            { period: '2024-Q1', electricity: 14500, plastic: 480, carbon: 9.2, employees: 145, training: 280, status: '已审核' },
+            { period: '2023-Q4', electricity: 13800, plastic: 450, carbon: 8.7, employees: 142, training: 310, status: '已审核' },
+            { period: '2023-Q3', electricity: 15200, plastic: 520, carbon: 9.8, employees: 148, training: 295, status: '已审核' }
+        ];
+        
+        // 步骤管理
         function nextStep(step) {
             document.getElementById(`step${currentStep}Content`).style.display = 'none';
             document.getElementById(`step${currentStep}`).classList.remove('active');
@@ -548,13 +692,6 @@
             document.getElementById(`step${currentStep}Content`).style.display = 'block';
             document.getElementById(`step${currentStep}`).classList.add('active');
         }
-        
-        // 示例数据
-        const sampleData = [
-            { period: '2024-Q1', electricity: 14500, plastic: 480, carbon: 9.2, employees: 145, training: 280, status: '已审核' },
-            { period: '2023-Q4', electricity: 13800, plastic: 450, carbon: 8.7, employees: 142, training: 310, status: '已审核' },
-            { period: '2023-Q3', electricity: 15200, plastic: 520, carbon: 9.8, employees: 148, training: 295, status: '已审核' }
-        ];
         
         // 初始化数据表
         function initDataTable() {
@@ -578,8 +715,8 @@
         
         // 计算碳排放
         function calculateCarbonFootprint(electricity, plastic) {
-            const scope2 = electricity * 0.581 / 1000; // 电力排放（吨CO2e）
-            const scope3_plastic = plastic * 1.95 / 1000; // 塑料排放（吨CO2e）
+            const scope2 = electricity * 0.581 / 1000; // 电力排放(吨 CO2e)
+            const scope3_plastic = plastic * 1.95 / 1000; // 塑料排放(吨 CO2e)
             return (scope2 + scope3_plastic).toFixed(2);
         }
         
@@ -593,48 +730,38 @@
             const training = parseFloat(document.getElementById('training').value) || 0;
             const accidents = parseInt(document.getElementById('accidents').value) || 0;
             const audits = parseInt(document.getElementById('audits').value) || 0;
-
             const year = document.getElementById('reportYear').value;
             const quarter = document.getElementById('reportQuarter').value;
             const currentPeriod = `${year}-${quarter}`;
             
             // 计算各项得分
-            // 环境得分（能源效率、废弃物管理）
             const industryAvgKwh = 50000;
             const energyScore = Math.max(0, 100 * (1 - electricity / industryAvgKwh));
-            const wasteScore = 75; // 简化计算
+            const wasteScore = 75;
             const environmentalScore = (energyScore * 0.6 + wasteScore * 0.4);
             
-            // 社会得分（培训、安全）
             const trainingScore = Math.min(100, training / 20 * 100);
             const safetyScore = Math.max(0, 100 - accidents * 10);
             const socialScore = (trainingScore * 0.5 + safetyScore * 0.5);
             
-            // 治理得分（合规）
             const governanceScore = 80 + (audits * 5);
             
-            // 综合得分
             const totalScore = (environmentalScore * 0.4 + socialScore * 0.3 + governanceScore * 0.3);
             
             // 更新显示
             document.getElementById('envScore').textContent = environmentalScore.toFixed(1);
             document.getElementById('envScore').className = getScoreClass(environmentalScore);
-            
             document.getElementById('socialScore').textContent = socialScore.toFixed(1);
             document.getElementById('socialScore').className = getScoreClass(socialScore);
-            
             document.getElementById('govScore').textContent = governanceScore.toFixed(1);
             document.getElementById('govScore').className = getScoreClass(governanceScore);
-            
             document.getElementById('totalScore').textContent = totalScore.toFixed(1);
             document.getElementById('totalScore').className = getScoreClass(totalScore);
             
             // 添加新记录
-            const period = currentPeriod;
             const carbon = calculateCarbonFootprint(electricity, plastic);
-            
             sampleData.unshift({
-                period: period,
+                period: currentPeriod,
                 electricity: electricity,
                 plastic: plastic,
                 carbon: parseFloat(carbon),
@@ -646,7 +773,7 @@
             initDataTable();
             initCharts();
             
-            // alert(`ESG评分计算完成！\n综合得分: ${totalScore.toFixed(1)}\n碳排放: ${carbon} 吨CO2e`);
+            alert(`ESG评分计算完成！\n综合得分: ${totalScore.toFixed(1)}\n碳排放: ${carbon}吨CO2e`);
         }
         
         function getScoreClass(score) {
@@ -664,93 +791,56 @@
             const periods = sampleData.map(d => d.period);
             
             const carbonOption = {
-                tooltip: {
+                tooltip: { 
                     trigger: 'axis',
-                    formatter: '{b}: {c} 吨CO2e'
+                    formatter: '{b}: {c}吨CO2e'
                 },
-                xAxis: {
-                    type: 'category',
-                    data: periods
+                xAxis: { 
+                    type: 'category', 
+                    data: periods 
                 },
-                yAxis: {
-                    type: 'value',
-                    name: '吨CO2e'
+                yAxis: { 
+                    type: 'value', 
+                    name: '吨 CO2e' 
                 },
                 series: [{
                     data: carbonData,
                     type: 'line',
                     smooth: true,
-                    lineStyle: {
-                        color: '#52c41a',
-                        width: 3
+                    lineStyle: { 
+                        color: '#52c41a', 
+                        width: 3 
                     },
                     itemStyle: {
                         color: '#52c41a'
-                    },
-                    areaStyle: {
-                        color: {
-                            type: 'linear',
-                            x: 0,
-                            y: 0,
-                            x2: 0,
-                            y2: 1,
-                            colorStops: [{
-                                offset: 0, color: 'rgba(82, 196, 26, 0.3)'
-                            }, {
-                                offset: 1, color: 'rgba(82, 196, 26, 0)'
-                            }]
-                        }
                     }
                 }]
             };
+            
             carbonChart.setOption(carbonOption);
             
             // 雷达图
             const radarChart = echarts.init(document.getElementById('radarChart'));
             const radarOption = {
-                tooltip: {
-                    trigger: 'item'
-                },
+                tooltip: { trigger: 'item' },
                 radar: {
                     indicator: [
                         { name: '能源效率', max: 100 },
                         { name: '废弃物管理', max: 100 },
                         { name: '员工培训', max: 100 },
                         { name: '安全生产', max: 100 },
-                        { name: '合规治理', max: 100 },
-                        { name: '供应链责任', max: 100 }
+                        { name: '合规治理', max: 100 }
                     ]
                 },
                 series: [{
                     type: 'radar',
-                    data: [
-                        {
-                            value: [78, 65, 82, 75, 88, 70],
-                            name: '当前得分',
-                            areaStyle: {
-                                color: 'rgba(24, 144, 255, 0.3)'
-                            },
-                            lineStyle: {
-                                color: '#1890ff'
-                            },
-                            itemStyle: {
-                                color: '#1890ff'
-                            }
-                        },
-                        {
-                            value: [65, 60, 70, 68, 72, 65],
-                            name: '行业平均',
-                            lineStyle: {
-                                color: '#faad14',
-                                type: 'dashed'
-                            },
-                            itemStyle: {
-                                color: '#faad14'
-                            }
-                        }
-                    ]
+                    data: [{
+                        value: [78, 65, 82, 75, 88],
+                        name: '当前得分'
+                    }]
                 }]
             };
+            
             radarChart.setOption(radarOption);
             
             // 窗口大小改变时重绘图表
@@ -760,7 +850,6 @@
             });
         }
         
-        // 生成报告
         function generateReport() {
             const reportType = document.getElementById('reportType').value;
             const language = document.getElementById('reportLanguage').value;
@@ -846,9 +935,8 @@ V. Improvement Recommendations
             document.getElementById('reportOutput').textContent = report;
         }
         
-    // 导出功能
-  // 导出功能
-function exportToPDF() {
+        // 导出PDF
+        function exportToPDF() {
     try {
         // 显示加载提示
         const reportOutput = document.getElementById('reportOutput');
@@ -953,54 +1041,74 @@ function generatePDFWithImage() {
     });
     
     let currentPage = 0;
-    let totalPages = containers.length;
     
     // 逐个处理每个容器
-    function processNextContainer() {
-        if (currentPage >= containers.length) {
-            // 所有容器处理完毕，保存PDF
-            pdf.save(`ESG报告_${companyName}_${year}${quarter}.pdf`);
-            document.getElementById('reportOutput').textContent = 'PDF报告已生成并下载！';
-            return;
+let totalPages = containers.length;
+
+// 逐个处理每个容器
+function processNextContainer() {
+    if (currentPage >= containers.length) {
+        // 所有容器处理完毕，保存PDF
+        pdf.save(`ESG报告_${companyName}_${year}${quarter}.pdf`);
+        document.getElementById('reportOutput').textContent = 'PDF报告已生成并下载！';
+        return;
+    }
+    
+    const container = containers[currentPage];
+    document.body.appendChild(container);
+    
+    // 使用html2canvas转换当前容器
+    html2canvas(container, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false,
+        allowTaint: true,
+        useCORS: true
+    }).then(canvas => {
+        // 移除容器
+        document.body.removeChild(container);
+        
+        // 添加新页（除了第一页）
+        if (currentPage > 0) {
+            pdf.addPage();
         }
         
-        const container = containers[currentPage];
-        document.body.appendChild(container);
+        // 将canvas添加到PDF
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 210; // A4宽度（mm）
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
-        // 使用html2canvas转换当前容器
-        html2canvas(container, {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            logging: false,
-            allowTaint: true,
-            useCORS: true
-        }).then(canvas => {
-            // 移除容器
-            document.body.removeChild(container);
-            
-            // 添加新页（除了第一页）
-            if (currentPage > 0) {
-                pdf.addPage();
-            }
-            
-            // 将canvas添加到PDF
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = 210; // A4宽度（mm）
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-            
-            // 添加页码
-            const pageNum = currentPage + 1;
-            
-            currentPage++;
-            processNextContainer();
-        }).catch(error => {
-            console.error('生成PDF失败:', error);
-            alert('生成PDF失败：' + error.message);
-            document.body.removeChild(container);
-        });
-    }
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
+        
+        // 添加水印（每个页面都添加）
+pdf.setTextColor(200, 200, 200);
+pdf.setFont('helvetica', 'bold');  // helvetica 支持中文
+pdf.setFontSize(25);
+
+
+const pageWidth = pdf.internal.pageSize.getWidth();
+const pageHeight = pdf.internal.pageSize.getHeight();
+
+// 水印的位置
+const watermarks = [
+    { text: '         For reference only. Commercial use is prohibited.', y: pageHeight * 0.45 },
+    { text: '         For reference only. Commercial use is prohibited.', y: pageHeight * 0.85 },
+];
+
+watermarks.forEach(wm => {
+    pdf.text(wm.text, pageWidth / 2, wm.y, { 
+        angle: 25, 
+        align: 'center' 
+    });
+});
+        currentPage++;
+        processNextContainer();
+    }).catch(error => {
+        console.error('生成PDF失败:', error);
+        alert('生成PDF失败：' + error.message);
+        document.body.removeChild(container);
+    });
+}
     
     // 开始处理第一个容器
     processNextContainer();
@@ -1583,15 +1691,6 @@ function createSuggestionContainer() {
                 font-weight: bold;
                 color: #1890ff;
             }
-            .priority-high {
-                display: inline-block;
-                background-color: #f5222d;
-                color: white;
-                padding: 2px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                margin-left: 8px;
-            }
         </style>
         
         <div class="report-container">
@@ -1804,10 +1903,10 @@ function createTrendContainer() {
     
     return container;
 }
-        // 增强现有的导出功能
+        
+        // 导出Excel
         function exportToExcel() {
             try {
-                // 获取所有表单数据
                 const formData = {
                     '企业名称': document.getElementById('companyName').value,
                     '报告周期': `${document.getElementById('reportYear').value}-${document.getElementById('reportQuarter').value}`,
@@ -1831,50 +1930,357 @@ function createTrendContainer() {
                     )
                 };
                 
-                // 转换为数组格式
                 const dataArray = [Object.keys(formData), Object.values(formData)];
-                
-                // 添加历史数据
                 const ws = XLSX.utils.aoa_to_sheet(dataArray);
-                
-                // 添加第二个工作表包含历史数据
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "当前数据");
                 
-                // 添加历史数据表
                 const historyWs = XLSX.utils.json_to_sheet(sampleData);
                 XLSX.utils.book_append_sheet(wb, historyWs, "历史数据");
                 
-                // 生成文件名
-                const fileName = `ESG完整数据_${document.getElementById('companyName').value}_${new Date().toISOString().slice(0,10)}.xlsx`;
+                // 添加水印行
+                const watermarkRow = [['* 本报告仅供参考，不可用于商业用途 *']];
+                XLSX.utils.sheet_add_aoa(ws, watermarkRow, { origin: "A1" });
                 
-                // 保存文件
+                if(!ws['!merges']) ws['!merges'] = [];
+                ws['!merges'].push({ s: {r:0, c:0}, e: {r:0, c:Object.keys(formData).length-1} });
+                
+                const fileName = `ESG报告_${document.getElementById('companyName').value}_${new Date().toISOString().slice(0,10)}.xlsx`;
                 XLSX.writeFile(wb, fileName);
                 
-                // 更新报告输出
-                document.getElementById('reportOutput').textContent = 'Excel报告已生成并下载！';
+                document.getElementById('reportOutput').textContent = 'Excel报告已生成并下载！(已添加水印)';
             } catch (error) {
                 alert('导出Excel时出错: ' + error.message);
             }
         }
-        // 初始化应用
+        
+        // ============================================
+        // 行业数据和新闻模块
+        // ============================================
+        
+        let industryData = {
+            avgScore: 68.2,
+            carbonIntensity: 8.7,
+            sustainableMaterialRate: 42.5,
+            esgDisclosureRate: 65.8,
+            lastUpdated: new Date()
+        };
+        
+        // 新闻数据
+        let esgNews = [
+            {
+                id: 1,
+                title: "生态环境部发布《企业环境信息依法披露管理办法》",
+                summary: "新规要求重点排污企业强制披露环境信息，ESG披露进入强制时代",
+                source: "生态环境部",
+                time: "2小时前",
+                category: "policy",
+                hot: true
+            },
+            {
+                id: 2,
+                title: "玩具行业ESG标准研讨会召开，推动绿色供应链建设",
+                summary: "中国玩具协会联合多家企业制定行业ESG评价标准",
+                source: "中国玩具协会",
+                time: "5小时前",
+                category: "industry",
+                hot: true
+            },
+            {
+                id: 3,
+                title: "生物降解塑料在玩具制造中的应用突破",
+                summary: "新型生物降解材料成本降低30%，有望替代传统塑料",
+                source: "材料科学前沿",
+                time: "1天前",
+                category: "tech",
+                hot: false
+            },
+            {
+                id: 4,
+                title: "欧盟通过新规：玩具产品需标注碳足迹",
+                summary: "2024年起出口欧盟玩具必须提供产品碳足迹信息",
+                source: "欧盟委员会",
+                time: "2天前",
+                category: "policy",
+                hot: true
+            }
+        ];
+        
+        // 更新行业数据
+        function updateIndustryData() {
+            industryData.avgScore = (68 + Math.random() * 2).toFixed(1);
+            industryData.carbonIntensity = (8.5 + Math.random() * 0.5).toFixed(1);
+            industryData.sustainableMaterialRate = (40 + Math.random() * 5).toFixed(1);
+            industryData.esgDisclosureRate = (65 + Math.random() * 3).toFixed(1);
+            industryData.lastUpdated = new Date();
+            
+            document.getElementById('industryAvgScore').textContent = industryData.avgScore;
+            document.getElementById('industryCarbonIntensity').textContent = industryData.carbonIntensity;
+            document.getElementById('sustainableMaterialRate').textContent = industryData.sustainableMaterialRate + '%';
+            document.getElementById('esgDisclosureRate').textContent = industryData.esgDisclosureRate + '%';
+            
+            const timeStr = industryData.lastUpdated.toLocaleTimeString('zh-CN');
+            document.getElementById('lastUpdateTime').textContent = timeStr;
+            
+            // 模拟变化百分比
+            document.getElementById('industryScoreChange').textContent = (Math.random() > 0.5 ? '+' : '-') + (Math.random() * 1.5).toFixed(1) + '%';
+            document.getElementById('materialRateChange').textContent = '+' + (Math.random() * 4).toFixed(1) + '%';
+            document.getElementById('disclosureChange').textContent = '+' + (Math.random() * 6).toFixed(1) + '%';
+        }
+        
+        // 刷新行业数据
+        function refreshIndustryData() {
+            const btn = event.target.closest('button');
+            const originalHTML = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> 更新中...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                updateIndustryData();
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                showToast('行业数据已更新', 'success');
+            }, 800);
+        }
+        
+        // 获取ESG新闻
+        function fetchESGNews() {
+            const loadingEl = document.getElementById('newsLoading');
+            const newsContainer = document.getElementById('newsContainer');
+            
+            loadingEl.style.display = 'flex';
+            newsContainer.innerHTML = '';
+            
+            setTimeout(() => {
+                const newId = esgNews.length + 1;
+                const newNews = {
+                    id: newId,
+                    title: "ESG投资规模突破2万亿元，监管要求趋严",
+                    summary: "中国ESG投资市场快速发展，监管机构加强ESG基金监管",
+                    source: "财经网",
+                    time: "刚刚",
+                    category: "industry",
+                    hot: true
+                };
+                
+                esgNews.unshift(newNews);
+                renderNews(esgNews);
+                loadingEl.style.display = 'none';
+                showToast('已获取最新ESG新闻', 'success');
+            }, 1500);
+        }
+        
+        // 渲染新闻列表
+        function renderNews(newsList) {
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = '';
+            
+            newsList.forEach(news => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-4 col-md-6';
+                
+                col.innerHTML = `
+                    <div class="card news-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary">${getCategoryName(news.category)}</span>
+                                <small class="text-muted">${news.time}</small>
+                            </div>
+                            <h6 class="news-title">${news.title}</h6>
+                            <p class="card-text text-muted" style="font-size:0.9rem;">${news.summary}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="text-muted">来源: ${news.source}</span>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewNewsDetail(${news.id})">查看详情</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(col);
+            });
+        }
+        
+        // 查看新闻详情
+        function viewNewsDetail(newsId) {
+            const news = esgNews.find(n => n.id === newsId);
+            if (!news) return;
+            
+            document.getElementById('newsListContainer').style.display = 'none';
+            const detailContainer = document.getElementById('newsDetailContainer');
+            detailContainer.style.display = 'block';
+            
+            const detailContent = document.getElementById('newsDetailContent');
+            
+            detailContent.innerHTML = `
+                <div class="news-detail">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge bg-primary fs-6">${getCategoryName(news.category)}</span>
+                        <div class="text-end">
+                            <small class="text-muted d-block">发布时间: ${news.time}</small>
+                            <small class="text-muted">来源: ${news.source}</small>
+                        </div>
+                    </div>
+                    
+                    <h2 class="mb-4">${news.title}</h2>
+                    
+                    <div class="mb-4" style="font-size: 1.1rem; line-height: 1.8;">
+                        <p><strong>摘要：</strong>${news.summary}</p>
+                        <p>${generateMockNewsContent(news)}</p>
+                    </div>
+                    
+                    <div class="card bg-light border-0 p-3 mb-4">
+                        <h5><i class="bi bi-info-circle me-2"></i>政策/事件影响分析</h5>
+                        <p class="mb-0">${getImpactAnalysis(news.category)}</p>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between border-top pt-3">
+                        <button class="btn btn-outline-primary" onclick="shareNews(${news.id})">
+                            <i class="bi bi-share me-1"></i> 分享
+                        </button>
+                        <div>
+                            <span class="text-muted me-3"><i class="bi bi-eye me-1"></i> 阅读量: ${getRandomReadCount()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            detailContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 显示新闻列表
+        function showNewsList() {
+            document.getElementById('newsDetailContainer').style.display = 'none';
+            document.getElementById('newsListContainer').style.display = 'block';
+            document.getElementById('newsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 新闻分类筛选
+        function filterNews(category) {
+            const buttons = document.querySelectorAll('#newsSection .btn-group .btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            showNewsList();
+            
+            let filteredNews = esgNews;
+            if (category !== 'all') {
+                filteredNews = esgNews.filter(news => news.category === category);
+            }
+            
+            renderNews(filteredNews);
+        }
+        
+        function getCategoryName(category) {
+            const categories = {
+                'policy': '政策法规',
+                'industry': '行业动态',
+                'tech': '技术创新'
+            };
+            return categories[category] || '其他';
+        }
+        
+        // 模拟生成完整新闻内容
+        function generateMockNewsContent(news) {
+            const contents = {
+                policy: `该政策由${news.source}正式发布，标志着我国在ESG领域监管的进一步深化。新规详细规定了企业环境信息披露的范围、频率和标准，要求重点排污单位每季度公开排放数据，并于每年4月底前发布上一年度环境报告。`,
+                industry: `此次研讨会汇聚了行业协会领导、头部企业代表及学术专家共50余人。会议围绕玩具行业ESG评价标准草案进行了深入讨论，重点在绿色材料采购、低碳生产工艺、供应链劳工权益等维度建立了量化指标。`,
+                tech: `该技术由国内科研团队历经三年攻关取得突破。新型生物降解材料以玉米淀粉和纤维素为主要原料，在自然条件下可在180天内完全降解为水和二氧化碳。本次突破使得材料成本从每吨3万元降至2.1万元。`
+            };
+            return contents[news.category] || `这是关于"${news.title}"的详细报道。该新闻来自${news.source}，反映了当前ESG领域的最新动态与发展趋势。`;
+        }
+        
+        // 获取影响分析
+        function getImpactAnalysis(category) {
+            const analysis = {
+                policy: '该政策将强制提升企业环境信息透明度，可能增加合规成本，但长期有利于获得绿色融资、提升品牌声誉，并规避监管风险。',
+                industry: '行业标准的建立将规范市场竞争，淘汰落后产能，为领先企业提供差异化优势。',
+                tech: '新材料的应用将直接降低产品碳足迹，符合全球环保趋势与消费者偏好，可能成为新的市场卖点。'
+            };
+            return analysis[category] || '此动态可能对行业竞争格局、企业合规要求或技术发展路径产生影响，值得持续关注。';
+        }
+        
+        // 分享功能
+        function shareNews(newsId) {
+            const shareUrl = window.location.origin + window.location.pathname + '#news=' + newsId;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('新闻链接已复制到剪贴板，您可以分享给他人。');
+            });
+        }
+        
+        // 生成随机阅读量
+        function getRandomReadCount() {
+            return Math.floor(Math.random() * 5000) + 1000;
+        }
+        
+        // 显示提示消息
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            toast.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+            toast.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 3000);
+        }
+        
+        // ============================================
+        // 智能数据更新功能
+        // ============================================
+        
+        function fetchLatestESGData() {
+            const alertEl = document.getElementById('dataUpdateAlert');
+            const textEl = document.getElementById('dataUpdateText');
+            alertEl.style.display = 'flex';
+            textEl.textContent = "正在获取最新的行业基准数据...";
+            
+            setTimeout(() => {
+                textEl.innerHTML = `<strong>数据更新成功！</strong> 已获取最新的行业基准数据。建议点击下方"计算ESG评分"以应用新基准。`;
+                alertEl.className = "alert alert-success d-flex align-items-center";
+            }, 1500);
+        }
+        
+        // ============================================
+        // 付费功能相关函数
+        // ============================================
+        
+        function showPaymentModal() {
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            paymentModal.show();
+        }
+        
+        function redirectToPayment(channel) {
+            alert(`即将跳转到${channel}支付页面... (此为演示，请在此处集成真实支付接口)`);
+            bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+        }
+        
+        // ============================================
+        // 初始化函数
+        // ============================================
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // 初始化年份选择
             const yearSelect = document.getElementById('reportYear');
             const currentYear = new Date().getFullYear();
-            
             for (let year = 2015; year <= 2025; year++) {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = year + '年';
-                if (year === currentYear) {
-                    option.selected = true; // 默认选中当前年份
-                }
+                if (year === currentYear) option.selected = true;
                 yearSelect.appendChild(option);
             }
-
+            
+            // 初始化数据
             initDataTable();
             initCharts();
-            calculateESG(); // 初始计算
+            updateIndustryData();
+            renderNews(esgNews);
+            
+            // 设置定时更新
+            setInterval(updateIndustryData, 300000);
             
             // 平滑滚动
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1882,10 +2288,7 @@ function createTrendContainer() {
                     e.preventDefault();
                     const target = document.querySelector(this.getAttribute('href'));
                     if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 });
             });
